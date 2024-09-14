@@ -2,6 +2,7 @@ import os
 import logging
 import requests
 import yaml
+import torch
 from io import BytesIO
 from PIL import Image
 from label_studio_ml.model import LabelStudioMLBase
@@ -48,6 +49,9 @@ class YOLO(LabelStudioMLBase):
         self.to_name = schema['to_name'][0]
         model_name = os.getenv("MODEL_DIR") + '/' +os.getenv("MODEL_NAME")
         self.model = UltralyticsYOLO(model_name)
+        if torch.cuda.is_available():
+            self.model.to("cuda")
+        # print(f'use device: {self.model.device}')
         self.labels = list(self.model.names.values())
         
     def predict(

@@ -7,6 +7,13 @@ services:
     ports:
       - "9090:9090"
     privileged: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     environment:
       # specify these parameters if you want to use basic auth for the model server
       - BASIC_AUTH_USER=
@@ -19,6 +26,7 @@ services:
       - WORKERS=1
       - THREADS=8
       - DEBUG_PLOT=false
+      - NVIDIA_DRIVER_CAPABILITIES=all
 
       - MODEL_DIR=/data/models
       - LABEL_STUDIO_URL=http://192.168.1.172:8085
@@ -27,8 +35,8 @@ services:
       - MODEL_NAME=best.pt
       - MODEL_SCORE_THRESHOLD=0.4
 
-      - LABEL_STUDIO_API_KEY=5d9100f91b32d4cbb40ac9f3040a43db361ecead
+      - LABEL_STUDIO_API_KEY=2f96facaac7c41842b9b9178c528bc284a99c6e3
     volumes:
       - "./models:/data/models"
-      - "./model.py:/data/model.py"
+      - "./model.py:/app/model.py"
     restart: unless-stopped
