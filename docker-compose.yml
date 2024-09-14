@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  ml-backend:
+    container_name: ml-backend
+    image: ml_backend
+    ports:
+      - "9090:9090"
+    build:
+      context: .
+    privileged: true
+    environment:
+      # specify these parameters if you want to use basic auth for the model server
+      - BASIC_AUTH_USER=
+      - BASIC_AUTH_PASS=
+      # set the log level for the model server
+      - LOG_LEVEL=DEBUG
+      # any other parameters that you want to pass to the model server
+      - ANY=PARAMETER
+      # specify the number of workers and threads for the model server
+      - WORKERS=1
+      - THREADS=8
+      - DEBUG_PLOT=false
+
+      - MODEL_DIR=/data/models
+
+      - MODEL_VERSION=自动标注_v0.0.1
+      - MODEL_NAME=best.pt
+      - MODEL_SCORE_THRESHOLD=0.4
+
+      - LABEL_STUDIO_URL=http://192.168.1.172:8085
+      - LABEL_STUDIO_API_KEY=96a5318eea5d0cde656d4b49a1173cdde98b0745
+    volumes:
+      - "./models:/data/models"
