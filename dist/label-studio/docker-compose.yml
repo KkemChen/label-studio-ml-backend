@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  label-studio:
+    container_name: label-studio
+    image: heartexlabs/label-studio:latest
+    privileged: true
+    environment:
+      - LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./mydata:/label-studio/data
+      - ./localstorage:/localstorage
+    restart: unless-stopped
