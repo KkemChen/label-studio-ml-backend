@@ -22,14 +22,29 @@ from label_studio_sdk._extensions.label_studio_tools.core.utils.io import get_lo
 from typing import List, Dict, Optional
 from ultralytics import YOLO as UltralyticsYOLO
 
-load_dotenv()
+is_loaded = load_dotenv()
+
+# 检查是否成功加载
+if is_loaded:
+    print(".env 文件加载成功")
+else:
+    print(".env 文件加载失败或未找到")
+    
+env_model_dir = os.getenv("MODEL_DIR")
+env_log_level = os.getenv('LOG_LEVEL')
+env_label_studio_url = os.getenv('LABEL_STUDIO_URL')
+env_model_version = os.getenv('MODEL_VERSION')
+env_model_name = os.getenv('MODEL_NAME')
+env_model_score_threshold = float(os.getenv('MODEL_SCORE_THRESHOLD'))
+env_label_studio_api_key = os.getenv('LABEL_STUDIO_API_KEY')
+    
 print("=============================================")
-print(f"LOG_LEVEL: {os.getenv('LOG_LEVEL')}")
-print(f"LABEL_STUDIO_URL: {os.getenv('LABEL_STUDIO_URL')}")
-print(f"MODEL_VERSION: {os.getenv('MODEL_VERSION')}")
-print(f"MODEL_NAME: {os.getenv('MODEL_NAME')}")
-print(f"MODEL_SCORE_THRESHOLD: {os.getenv('MODEL_SCORE_THRESHOLD')}")
-print(f"LABEL_STUDIO_API_KEY: {os.getenv('LABEL_STUDIO_API_KEY')}")
+print(f"LOG_LEVEL: {env_log_level}")
+print(f"LABEL_STUDIO_URL: {env_label_studio_url}")
+print(f"MODEL_VERSION: {env_model_version}")
+print(f"MODEL_NAME: {env_model_name}")
+print(f"MODEL_SCORE_THRESHOLD: {env_model_score_threshold}")
+print(f"LABEL_STUDIO_API_KEY: {env_label_studio_api_key}")
 print("=============================================")
 
 logger = logging.getLogger(__name__)
@@ -54,12 +69,12 @@ class YOLO(LabelStudioMLBase):
 
     def setup(self):
         """Configure any parameters of your model here"""
-        self.set("model_version", os.getenv("MODEL_VERSION"))
+        self.set("model_version", env_model_version)
         
         from_name, schema = list(self.parsed_label_config.items())[0]
         self.from_name = from_name
         self.to_name = schema['to_name'][0]
-        model_name = os.getenv("MODEL_DIR") + '/' +os.getenv("MODEL_NAME")
+        model_name = env_model_dir + '/' + env_model_name
         self.model = UltralyticsYOLO(model_name)
         if torch.cuda.is_available():
             self.model.to("cuda")
@@ -86,11 +101,11 @@ class YOLO(LabelStudioMLBase):
         score = 0
 
         header = {
-            "Authorization": "Token " + os.getenv("LABEL_STUDIO_API_KEY")}
+            "Authorization": "Token " + env_label_studio_api_key}
         image = Image.open(BytesIO(requests.get(
-            os.getenv("LABEL_STUDIO_URL") + task['data']['image'], headers=header).content))
+            env_label_studio_url + task['data']['image'], headers=header).content))
         original_width, original_height = image.size
-        results = self.model.predict(image, conf = os.getenv("MODEL_SCORE_THRESHOLD"))
+        results = self.model.predict(image, conf=env_model_score_threshold)
 
         i = 0
         for result in results:
@@ -119,7 +134,7 @@ class YOLO(LabelStudioMLBase):
         return [{
             "result": predictions,
             "score": score / (i + 1),
-            "model_version": os.getenv("MODEL_VERSION"),  # all predictions will be differentiated by model version
+            "model_version": env_model_version,  # all predictions will be differentiated by model version
         }]
 
     def fit(self, event, data, **kwargs):
