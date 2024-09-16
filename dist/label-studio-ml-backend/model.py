@@ -90,7 +90,7 @@ class YOLO(LabelStudioMLBase):
         image = Image.open(BytesIO(requests.get(
             os.getenv("LABEL_STUDIO_URL") + task['data']['image'], headers=header).content))
         original_width, original_height = image.size
-        results = self.model.predict(image)
+        results = self.model.predict(image, conf = os.getenv("MODEL_SCORE_THRESHOLD"))
 
         i = 0
         for result in results:
