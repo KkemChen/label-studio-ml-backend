@@ -3,6 +3,7 @@ import logging
 import requests
 import yaml
 import torch
+from dotenv import load_dotenv
 from io import BytesIO
 from PIL import Image
 from label_studio_ml.model import LabelStudioMLBase
@@ -21,9 +22,20 @@ from label_studio_sdk._extensions.label_studio_tools.core.utils.io import get_lo
 from typing import List, Dict, Optional
 from ultralytics import YOLO as UltralyticsYOLO
 
+load_dotenv()
+print("=============================================")
+print(f"LOG_LEVEL: {os.getenv('LOG_LEVEL')}")
+print(f"LABEL_STUDIO_URL: {os.getenv('LABEL_STUDIO_URL')}")
+print(f"MODEL_VERSION: {os.getenv('MODEL_VERSION')}")
+print(f"MODEL_NAME: {os.getenv('MODEL_NAME')}")
+print(f"MODEL_SCORE_THRESHOLD: {os.getenv('MODEL_SCORE_THRESHOLD')}")
+print(f"LABEL_STUDIO_API_KEY: {os.getenv('LABEL_STUDIO_API_KEY')}")
+print("=============================================")
+
 logger = logging.getLogger(__name__)
 if not os.getenv("LOG_LEVEL"):
     logger.setLevel(logging.INFO)
+
 
 # Register available model classes
 # available_model_classes = [

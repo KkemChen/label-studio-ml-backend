@@ -1,2 +1,3 @@
 ultralytics~=8.2.76
 tqdm
+python-dotenv

@@ -18,8 +18,6 @@ services:
       # specify these parameters if you want to use basic auth for the model server
       - BASIC_AUTH_USER=
       - BASIC_AUTH_PASS=
-      # set the log level for the model server
-      - LOG_LEVEL=INFO
       # any other parameters that you want to pass to the model server
       - ANY=PARAMETER
       # specify the number of workers and threads for the model server
@@ -29,14 +27,8 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
 
       - MODEL_DIR=/data/models
-      - LABEL_STUDIO_URL=http://192.168.1.172:8085
-
-      - MODEL_VERSION=自动标注_v0.0.1
-      - MODEL_NAME=best.pt
-      - MODEL_SCORE_THRESHOLD=0.4
-
-      - LABEL_STUDIO_API_KEY=2f96facaac7c41842b9b9178c528bc284a99c6e3
     volumes:
       - "./models:/data/models"
       - "./model.py:/app/model.py"
+      - "./.env:/app/.env"
     restart: unless-stopped
