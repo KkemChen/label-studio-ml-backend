@@ -7,13 +7,13 @@ services:
     ports:
       - "9090:9090"
     privileged: true
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
     environment:
       # specify these parameters if you want to use basic auth for the model server
       - BASIC_AUTH_USER=
