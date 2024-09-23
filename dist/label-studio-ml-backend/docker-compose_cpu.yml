@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  ml-backend:
+    container_name: label-studio-ml-backend
+    image: label_studio_ml_backend
+    ports:
+      - "9090:9090"
+    privileged: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      # specify these parameters if you want to use basic auth for the model server
+      - BASIC_AUTH_USER=
+      - BASIC_AUTH_PASS=
+      # any other parameters that you want to pass to the model server
+      - ANY=PARAMETER
+      # specify the number of workers and threads for the model server
+      - WORKERS=1
+      - THREADS=8
+      - DEBUG_PLOT=false
+      - NVIDIA_DRIVER_CAPABILITIES=all
+
+      - MODEL_DIR=/data/models
+    volumes:
+      - "./models:/data/models"
+      - "./model.py:/app/model.py"
+      - "./.env:/app/.env"
+    restart: unless-stopped
